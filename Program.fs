@@ -111,36 +111,71 @@ module StmtParser =
     do stmtRef :=
         comment <|> import <|> assign
 
+(* 
+    Each program is made of many statements. Each statement only contains one lambda-calculus 
+    expression max, so a similar function is not needed for the expression parser.
+*)
 let statements : Parser<Statement list, unit> =
     many (StmtParser.stmt .>> spaces)
 
-// "hell_o42"
-printfn "%A" (run name "hell_o42")
-
-// "hell_o42"
-printfn "%A" (run (parens name) "(hell_o42)")
-
-// Variable "hell_o42"
-printfn "%A" (run ExprParser.expr "(hell_o42)")
-
-// Lambda ("x", Lambda ("y", Lambda ("z", Variable "x")))
-printfn "%A" (run ExprParser.expr "\\x y z. x")
+// List of freevars in a given expression
+let rec freeVars (e: Expr) =
+    match e with
+    | Variable (y) -> [y]
+    | Lambda (y, body) -> freeVars body |> List.filter (fun z -> z <> y)
+    | Application (f, a) -> freeVars f @ freeVars a
+    | Constant (_) -> []
 
 (* 
-Application
-  (Application
-     (Application
-        (Lambda ("x", Lambda ("y", Lambda ("z", Variable "x"))), Variable "j"),
-      Variable "c"), Variable "v")
+    Generate a fresh variable, if in the free variables list.
+    Free variables can be named anything and it won't affect the program.
 *)
-printfn "%A" (run ExprParser.expr "(\\x y z. x) j c v")
+let rec freshVar (ss: List<string>) (y: string) =
+    if List.contains y ss then freshVar ss (y + "'")
+    else y
 
-// List of statements
-(*
-[
-    Import "foo";
-    Assign ("main", Application (Lambda ("x", Variable "x"), Variable "y"))
-]
-*)
-printfn "%A" (run statements "import foo; main = (\\x. x) y;")
+let rec rename (x: string) (y: string) (e: Expr) =
+    match e with
+    | Variable (z) -> if z.Equals(x) then Variable (y) else Variable (x)
+    | Lambda (z, body) -> if z.Equals(x) then Lambda(y, rename x y body) else Lambda(x, rename x y body)
+    | Application (f, z) -> Application (rename x y f, rename x y z)
+    | Constant (n) -> Constant (n)
 
+
+// Substitution
+let rec substitute (x: string) (arg: Expr) (e: Expr) =
+    match e with
+    | Variable(y) -> if x.Equals(y) then arg else Variable(y)
+    | Lambda(y, body) -> 
+        if x.Equals(y) then Lambda(y, body)
+        else 
+            if List.contains y (freeVars arg) then
+                freshVar (freeVars body @ freeVars arg) y
+                |> fun y' ->
+                    let result = Lambda (y', (substitute x arg (rename y y' body)))
+                    result
+            else
+                Lambda (y, substitute x arg body)
+    | Application (f, y) -> Application (substitute x arg f, substitute x arg y)
+    | Constant (n) -> Constant (n)
+
+
+// Beta reduction
+let rec reduce (type': Reduction) (e: Expr) =
+    match e with
+    | (Application ((Lambda (x, body) ), arg)) -> 
+        match type' with
+        | Normal -> Some (substitute x arg body)
+        | Applicative ->
+            match reduce type' arg with
+            | Some (arg') -> Some ( Application (Lambda (x, body), arg'))
+            | None -> None
+    | Application (f, x) -> 
+        match reduce type' x with
+        | Some x' -> Some (Application (f, x'))
+        | None -> None 
+    | Lambda (x, body) ->
+        match reduce type' body with
+        | Some (body') -> Some ( Lambda (x, body') )
+        | None -> None
+    | _ -> None
