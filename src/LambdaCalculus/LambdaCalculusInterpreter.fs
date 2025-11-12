@@ -5,6 +5,8 @@
     * Copyright: This code is in the public domain; feel free to use, copy, modify, and distribute it without credit or attribution.
 *) 
 
+module LambdaCalculusInterpreter
+
 open FParsec
 
 
@@ -71,7 +73,7 @@ let name : Parser<string, unit> =
     letter .>>. manyChars variableName
     |>> fun (c, s) -> string c + s
 
-module ExprParser =
+module public ExprParser =
     let expr, exprRef = createParserForwardedToRef<Expression, unit>()
 
     // Parser for lambda expressions
@@ -108,7 +110,7 @@ let importName : Parser<string, unit> =
     manySatisfy (fun c -> c <> ';') >>= fun rest ->
     preturn (sprintf "%c%s" first (System.String.Concat rest))
 
-module StmtParser =
+module public StmtParser =
     let stmt, stmtRef = createParserForwardedToRef<Statement, unit>()
         
     let comment =
@@ -411,3 +413,28 @@ let transpile (inputFileName: string) (outputFileName: string) : unit =
     with
     | ex ->
         System.IO.File.WriteAllText(outputFileName, $"Error reading input file: {ex.Message}")
+
+let execs (r: Reduction) (s: string) : Result<string, string> =
+    let stmts = parseProgram s
+    let importedContent = expandImports stmts
+    let fullProgram = header + importedContent + s
+
+    match run' fullProgram with
+    | Some e ->
+        let evaluated = evalExpression r e
+        match churchToN evaluated with
+        | Some (Natural n) -> Result.Ok (exprToString (Natural n))
+        | Some other -> Result.Ok (exprToString other)
+        | None -> Result.Ok (exprToString evaluated)
+    | None ->
+        Result.Error "Error during execution. Check syntax."
+
+let transpiles (s: string) : Result<string, string> =
+    let stmts = parseProgram s
+    let importedContent = expandImports stmts
+    let fullProgram = header + importedContent + s
+
+    let exprs = expandAll (parseProgram fullProgram)
+    match getMain exprs with
+    | Some e -> Result.Ok ("main="+ exprToString e + ";") // Wrap it in an entry point
+    | None -> Result.Error ("Error: No main expression found.")
