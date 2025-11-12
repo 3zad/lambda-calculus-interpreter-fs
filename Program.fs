@@ -368,23 +368,46 @@ let header : string =
     "
 
 let run' (s: string) : Expression option =
-    let fullProgram = header+s
+    let fullProgram = header + s
     let expanded = expandAll (parseProgram fullProgram)
     getMain expanded
 
-let exec (r: Reduction) (s: string) : unit =
-    match run' s with
-    | Some e ->
-        let evaluated = evalExpression r e
-        match churchToN evaluated with
-        | Some (Natural n) -> printfn "%A" n
-        | Some other -> printfn "%A" other
-        | None -> printfn "%A" evaluated 
-    | None -> printfn "Error during the execution of the program. Check syntax."
+let exec (r: Reduction) (filePath: string) : unit =
+    try
+        let content = System.IO.File.ReadAllText(filePath)
 
-let transpile (s: string) : unit =
-    match run' s with
-    | Some e -> printfn "%A" (exprToString e)
-    | None -> printfn "Error during the transpilation of the program. Check syntax."
+        let stmts = parseProgram content
+        let importedContent = expandImports stmts
+        let fullProgram = header + importedContent + content
 
-exec Normal "main=add 1000 1000;"
+        match run' fullProgram with
+        | Some e ->
+            let evaluated = evalExpression r e
+            match churchToN evaluated with
+            | Some (Natural n) -> printfn "%A" n
+            | Some other -> printfn "%A" other
+            | None -> printfn "%A" evaluated
+        | None ->
+            printfn "Error during execution. Check syntax."
+    with
+    | ex -> printfn "Error reading file: %s" ex.Message
+
+let transpile (inputFileName: string) (outputFileName: string) : unit =
+    try
+        let content = System.IO.File.ReadAllText(inputFileName)
+
+        let stmts = parseProgram content 
+        let importedContent = expandImports stmts
+        let fullProgram = header + importedContent + content
+
+        let exprs = expandAll (parseProgram fullProgram)
+        let output =
+            match getMain exprs with
+            | Some e -> "main="+ exprToString e + ";" // Wrap it in an entry point
+            | None -> "Error: No main expression found."
+
+        System.IO.File.WriteAllText(outputFileName, output)
+
+    with
+    | ex ->
+        System.IO.File.WriteAllText(outputFileName, $"Error reading input file: {ex.Message}")
