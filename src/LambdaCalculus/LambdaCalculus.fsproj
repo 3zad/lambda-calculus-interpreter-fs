@@ -1,9 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>net9.0</TargetFramework>
-  </PropertyGroup>
+
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<PackageId>LambdaCalculusInterpreter</PackageId>
+		<OutputType>Library</OutputType>
+		<Version>1.0.0</Version>
+		<Authors>Zachary Davis</Authors>
+		<Company>Zachary Davis</Company>
+		<Description>Lambda Calculus interpreter and transpiler for F#</Description>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<RepositoryUrl>https://github.com/3zad/lambda-calculus-interpreter-fs</RepositoryUrl>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	</PropertyGroup>
 
   <ItemGroup>
     <Compile Include="LambdaCalculusInterpreter.fs" />
