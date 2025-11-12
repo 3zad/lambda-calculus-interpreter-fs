@@ -66,7 +66,7 @@ module ExprParser =
 
     // Parser for lambda expressions
     let lam = 
-        (lexeme (pchar '\\' <|> pchar 'λ')) >>.
+        (lexeme (pchar 'λ' <|> pchar '\\')) >>.
         (many1 (lexeme name)) .>>
         lexeme (pchar '.') >>= fun xs ->
         expr
@@ -119,7 +119,11 @@ module StmtParser =
         |>> fun (varName, expr) -> Assign(varName, expr)
 
     do stmtRef :=
-        comment <|> import <|> assign
+        spaces >>. (
+            attempt comment
+            <|> attempt import
+            <|> assign
+        )
 
 // List of freevars in a given expression
 let rec freeVars (e: Expression) : List<string> =
@@ -214,8 +218,9 @@ let rec churchToN (e: Expression) : Expression option =
     | Application (f, a) ->
         match churchToN f with
         | Some (Natural n) -> Some (Natural n)
+        | Some other -> Some other
         | None -> churchToN a
-    | e' -> Some (e')
+    | _ -> Some (e)
 
 // Convert all natural numbers to church encoding for pure lambda calculus.
 let rec convertNaturals (e: Expression) : Expression =
@@ -245,23 +250,38 @@ let parseProgram (s: string) : List<Statement> =
 let rec evalExpression (r: Reduction) (e: Expression) =
 
     // Beta reduction helper function
-    let rec reduce (r': Reduction) (e': Expression) =
-        match e' with
-        | (Application ((Lambda (x, body) ), arg)) -> 
-            match r' with
+    let rec reduce (r: Reduction) (e: Expression) : Expression option =
+        match e with
+        | Application (Lambda(x, body), arg) ->
+            match r with
             | Normal -> Some (substitute x arg body)
             | Applicative ->
-                match reduce r' arg with
-                | Some (arg') -> Some ( Application (Lambda (x, body), arg'))
-                | None -> None
-        | Application (f, x) -> 
-            match reduce r' x with
-            | Some x' -> Some (Application (f, x'))
-            | None -> None 
+                match reduce r arg with
+                | Some arg' -> Some (Application(Lambda(x, body), arg'))
+                | None -> Some (substitute x arg body)
+    
+        | Application (f, a) ->
+            match r with
+            | Normal ->
+                match reduce r f with
+                | Some f' -> Some (Application(f', a))
+                | None ->
+                    match reduce r a with
+                    | Some a' -> Some (Application(f, a'))
+                    | None -> None
+            | Applicative ->
+                match reduce r f with
+                | Some f' -> Some (Application(f', a))
+                | None ->
+                    match reduce r a with
+                    | Some a' -> Some (Application(f, a'))
+                    | None -> None
+
         | Lambda (x, body) ->
-            match reduce r' body with
-            | Some (body') -> Some ( Lambda (x, body') )
+            match reduce r body with
+            | Some body' -> Some (Lambda(x, body'))
             | None -> None
+
         | _ -> None
 
     match reduce r e with
@@ -312,5 +332,46 @@ let rec expandImports (stmt: List<Statement>) : string =
 
         | _ -> expandImports stmts
 
-    
-printfn "%A" (parseProgram "main=λ n m. λ f x. n f (m f x) 10 1;")
+let rec getMain (stmts: List<Statement>) : Expression option =
+    match stmts with
+    | [] -> None
+    | (Assign (name', e))::stmts -> if name'.Equals("main") then Some e else getMain stmts
+    | _::stmts -> getMain stmts
+
+let header : string =
+    $"
+    pred = \\ n. \\ f. \\ x. n (\\ g. \\ h. h (g f)) (\\ u. x) (\\ u. u);
+    add = \\ n m. \\ f x. n f (m f x);
+    sub = \\ m. \\ n. n pred m;
+    mul = \\ m. \\ n. \\ f. m (n f);
+    true = \\ x. \\y. x;
+    false = \\ x. \\ y. y;
+    iszero = \\ n. n ( \\ x. false ) true;
+    cond = \\b. \\t. \\e. b t e;
+    nil = \\x.true;
+    cons = \\x.\\l.\\c.\\n. c x (l c n);
+    hd = \\p. p (\\h t. h) nil;
+    tl = \\p. p (\\h t. t) nil;
+    null = \\p. p (\\h t. false) true;
+    Y = \\f. (\\x. f (x x)) (\\x. f (x x));
+    "
+
+let run' (r: Reduction) (s: string) : Expression option =
+    let fullProgram = header+s
+    let expanded = expandAll (parseProgram fullProgram)
+    match getMain expanded with
+    | Some e -> 
+        let evaluated = evalExpression r e
+        match churchToN evaluated with
+        | Some n -> Some n
+        | None -> Some evaluated
+
+    | None -> None
+
+let helper s =
+    let f = header + s
+    match getMain (expandAll (parseProgram f)) with
+        | Some x -> Some (evalExpression Normal x)
+        | None -> None
+
+printfn "%A" (run' Applicative "kolm = sub (add (mul 2 2) 3) 4;main = add kolm (add kolm kolm);")
