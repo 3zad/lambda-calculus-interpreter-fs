@@ -1,0 +1,5 @@
+korda = λ n m. λ f x. n (m f) x;
+kaks = λ f x. f (f x);
+kolm = λ f x. f (f (f x));
+main = korda kaks kolm; 
+

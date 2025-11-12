@@ -1,0 +1,2 @@
+kolm = sub (add (mul 2 2) 3) 4;
+main = cond (iszero kolm) (add kolm kolm) kolm; 

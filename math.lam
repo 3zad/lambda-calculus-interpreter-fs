@@ -1,0 +1,5 @@
+% Successor function
+succ = λ n. λ f. λ x. f (n f x);
+
+% Power function
+pow = λ b. λ n. n b;

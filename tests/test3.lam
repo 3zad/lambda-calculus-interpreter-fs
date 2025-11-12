@@ -1,0 +1,4 @@
+liida = λ n m. λ f x. n f (m f x);
+kaks = λ f x. f (f x);
+kolm = λ f x. f (f (f x));
+main = liida kaks kolm;

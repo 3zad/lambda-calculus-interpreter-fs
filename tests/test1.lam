@@ -1,0 +1,3 @@
+dbl = \ x. add x x;
+
+main = dbl (dbl 2); 

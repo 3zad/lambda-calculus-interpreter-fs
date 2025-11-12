@@ -37,6 +37,16 @@ type Reduction =
 
 
 
+// ---------- PRETTY PRINTING ---------- //
+
+let rec exprToString (expr: Expression) : string =
+    match expr with
+    | Variable x -> x
+    | Natural n -> n.ToString()
+    | Lambda (x, e) -> sprintf "λ%s. (%s)" x (exprToString e)
+    | Application (f, a) -> sprintf "(%s) (%s)" (exprToString f) (exprToString a)
+
+
 
 // ---------- PARSER SECTION ---------- //
 
@@ -144,10 +154,12 @@ let rec freshVar (ss: List<string>) (y: string) : string =
 // Rename all the variables, bounded or not, in a certain expression.
 let rec rename (x: string) (y: string) (e: Expression) : Expression =
     match e with
-    | Variable (z) -> if z.Equals(x) then Variable (y) else Variable (x)
-    | Lambda (z, body) -> if z.Equals(x) then Lambda(y, rename x y body) else Lambda(x, rename x y body)
-    | Application (f, z) -> Application (rename x y f, rename x y z)
-    | Natural (n) -> Natural (n)
+    | Variable z -> if z = x then Variable y else Variable z
+    | Lambda (z, body) -> 
+        if z = x then Lambda (y, rename x y body)
+        else Lambda (z, rename x y body)
+    | Application (f, a) -> Application (rename x y f, rename x y a)
+    | Natural n -> Natural n
 
 // Substitution
 let rec substitute (x: string) (arg: Expression) (e: Expression) : Expression =
@@ -259,7 +271,6 @@ let rec evalExpression (r: Reduction) (e: Expression) =
                 match reduce r arg with
                 | Some arg' -> Some (Application(Lambda(x, body), arg'))
                 | None -> Some (substitute x arg body)
-    
         | Application (f, a) ->
             match r with
             | Normal ->
@@ -356,22 +367,24 @@ let header : string =
     Y = \\f. (\\x. f (x x)) (\\x. f (x x));
     "
 
-let run' (r: Reduction) (s: string) : Expression option =
+let run' (s: string) : Expression option =
     let fullProgram = header+s
     let expanded = expandAll (parseProgram fullProgram)
-    match getMain expanded with
-    | Some e -> 
+    getMain expanded
+
+let exec (r: Reduction) (s: string) : unit =
+    match run' s with
+    | Some e ->
         let evaluated = evalExpression r e
         match churchToN evaluated with
-        | Some n -> Some n
-        | None -> Some evaluated
+        | Some (Natural n) -> printfn "%A" n
+        | Some other -> printfn "%A" other
+        | None -> printfn "%A" evaluated 
+    | None -> printfn "Error during the execution of the program. Check syntax."
 
-    | None -> None
+let transpile (s: string) : unit =
+    match run' s with
+    | Some e -> printfn "%A" (exprToString e)
+    | None -> printfn "Error during the transpilation of the program. Check syntax."
 
-let helper s =
-    let f = header + s
-    match getMain (expandAll (parseProgram f)) with
-        | Some x -> Some (evalExpression Normal x)
-        | None -> None
-
-printfn "%A" (run' Applicative "kolm = sub (add (mul 2 2) 3) 4;main = add kolm (add kolm kolm);")
+exec Normal "main=add 1000 1000;"

@@ -1,0 +1,1 @@
+liida = λ n m. cond (iszero n) m (liida (sub n 1) (add m 1));main = liida 4 5;

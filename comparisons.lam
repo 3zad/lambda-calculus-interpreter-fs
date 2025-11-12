@@ -1,0 +1,9 @@
+and = λp.λq.p q p;
+or = λp.λq.p p q;
+not = λp.p false true;
+
+% Less than or equal to
+leq = λm.λn.iszero (sub m n);
+
+% Greater than or equal to (just swap the arguments)
+geq = λm.λn. ( leq n m );
