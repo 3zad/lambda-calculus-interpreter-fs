@@ -7,28 +7,38 @@
 
 open FParsec
 
+
+
+
+// ---------- DATA SECTION ---------- //
+
 // Lambda expression
-type Expr = 
-    | Lambda of string * Expr
-    | Application of Expr * Expr
+type Expression = 
+    | Lambda of string * Expression
+    | Application of Expression * Expression
     | Variable of string
-    | Constant of int
+    | Natural of int
 
 // Top-level variables and a pure lambda-calculus expression
 type Global =
     | Def of string
-    | Pure of Expr
+    | Pure of Expression
 
 // Comments, assignments of top-level variables, and file imports
 type Statement =
     | Comment of string
-    | Assign of string * Expr
+    | Assign of string * Expression
     | Import of string
 
 // Reduction enum
 type Reduction =
     | Normal
     | Applicative
+
+
+
+
+// ---------- PARSER SECTION ---------- //
 
 // Helper function for dealing with whitespaces
 let lexeme p = p .>> spaces
@@ -52,7 +62,7 @@ let name : Parser<string, unit> =
     |>> fun (c, s) -> string c + s
 
 module ExprParser =
-    let expr, exprRef = createParserForwardedToRef<Expr, unit>()
+    let expr, exprRef = createParserForwardedToRef<Expression, unit>()
 
     // Parser for lambda expressions
     let lam = 
@@ -67,7 +77,7 @@ module ExprParser =
         lexeme (
             (parens expr) 
             <|> (name |>> Variable) 
-            <|> (integer |>> Constant)
+            <|> (integer |>> Natural)
         )
 
     // Parser for applications
@@ -111,39 +121,32 @@ module StmtParser =
     do stmtRef :=
         comment <|> import <|> assign
 
-(* 
-    Each program is made of many statements. Each statement only contains one lambda-calculus 
-    expression max, so a similar function is not needed for the expression parser.
-*)
-let statements : Parser<Statement list, unit> =
-    many (StmtParser.stmt .>> spaces)
-
 // List of freevars in a given expression
-let rec freeVars (e: Expr) =
+let rec freeVars (e: Expression) : List<string> =
     match e with
     | Variable (y) -> [y]
     | Lambda (y, body) -> freeVars body |> List.filter (fun z -> z <> y)
     | Application (f, a) -> freeVars f @ freeVars a
-    | Constant (_) -> []
+    | Natural (_) -> []
 
 (* 
     Generate a fresh variable, if in the free variables list.
     Free variables can be named anything and it won't affect the program.
 *)
-let rec freshVar (ss: List<string>) (y: string) =
+let rec freshVar (ss: List<string>) (y: string) : string =
     if List.contains y ss then freshVar ss (y + "'")
     else y
 
-let rec rename (x: string) (y: string) (e: Expr) =
+// Rename all the variables, bounded or not, in a certain expression.
+let rec rename (x: string) (y: string) (e: Expression) : Expression =
     match e with
     | Variable (z) -> if z.Equals(x) then Variable (y) else Variable (x)
     | Lambda (z, body) -> if z.Equals(x) then Lambda(y, rename x y body) else Lambda(x, rename x y body)
     | Application (f, z) -> Application (rename x y f, rename x y z)
-    | Constant (n) -> Constant (n)
-
+    | Natural (n) -> Natural (n)
 
 // Substitution
-let rec substitute (x: string) (arg: Expr) (e: Expr) =
+let rec substitute (x: string) (arg: Expression) (e: Expression) : Expression =
     match e with
     | Variable(y) -> if x.Equals(y) then arg else Variable(y)
     | Lambda(y, body) -> 
@@ -157,25 +160,157 @@ let rec substitute (x: string) (arg: Expr) (e: Expr) =
             else
                 Lambda (y, substitute x arg body)
     | Application (f, y) -> Application (substitute x arg f, substitute x arg y)
-    | Constant (n) -> Constant (n)
+    | Natural (n) -> Natural (n)
 
+// Y combinator wrap
+let rec checkRec (stmts: List<Statement>) : List<Statement> = 
+    match stmts with
+    | [] -> []
+    | (Import (s)) :: stmts -> [Import s] @ checkRec stmts
+    | (Comment (s)) :: stmts -> checkRec stmts
+    | (Assign (name', e)) :: stmts ->
+        let eFinal =
+            if List.contains name' (freeVars e) then
+                Application ((Variable "Y"), (Lambda ("self", (rename name' "self" e))))
+            else
+                e
+        (Assign (name', eFinal)) :: checkRec stmts
 
-// Beta reduction
-let rec reduce (type': Reduction) (e: Expr) =
+// Church expressions for natural numbers
+let nToChurch (n: int) : Expression =
+    let f = "f"
+    let x = "x"
+    
+    // Helper function
+    let rec buildApps (n': int) (base': Expression) (s: string) =
+        match n' with
+        | 0 -> base'
+        | nat -> Application (Variable f, buildApps (nat - 1) base' f)
+
+    let body = buildApps n (Variable (x)) f
+
+    Lambda (f, (Lambda (x, body)))
+
+// Delta reduction
+let rec churchToN (e: Expression) : Expression option =
+
+    // Helper function
+    let rec countApps (e': Expression) (f: string) (x: string) : int option =
+        match e' with
+        | Variable x' -> if x'.Equals(x) then Some 0 else None
+        | Application (Variable f', rest) -> 
+            if f'.Equals(f) then
+                match countApps rest f x with
+                     | Some n -> Some (n + 1)
+                     | None -> None
+            else None
+        | _ -> None
+
     match e with
-    | (Application ((Lambda (x, body) ), arg)) -> 
-        match type' with
-        | Normal -> Some (substitute x arg body)
-        | Applicative ->
-            match reduce type' arg with
-            | Some (arg') -> Some ( Application (Lambda (x, body), arg'))
+    | Lambda (f, Lambda (x, body)) ->
+        match countApps body f x with
+        | Some n -> Some (Natural n)
+        | None -> Some body
+    | Application (f, a) ->
+        match churchToN f with
+        | Some (Natural n) -> Some (Natural n)
+        | None -> churchToN a
+    | e' -> Some (e')
+
+// Convert all natural numbers to church encoding for pure lambda calculus.
+let rec convertNaturals (e: Expression) : Expression =
+    match e with
+    | Natural n -> nToChurch n
+    | Variable x -> Variable x
+    | Lambda (x, body) -> Lambda (x, convertNaturals body)
+    | Application (f, a) -> Application (convertNaturals f, convertNaturals a)
+
+(* 
+    Each program is made of many statements. Each statement only contains one lambda-calculus 
+    expression max, so a similar function is not needed for the expression parser.
+*)
+let statements : Parser<Statement list, unit> =
+    many (StmtParser.stmt .>> spaces)
+
+let parseProgram (s: string) : List<Statement> =
+    match run statements s with
+    | Success (stmts, _, _) -> checkRec stmts
+    | Failure (msg, _, _) -> failwith msg
+
+
+
+
+// ---------- EVALUATION SECTION ---------- //
+
+let rec evalExpression (r: Reduction) (e: Expression) =
+
+    // Beta reduction helper function
+    let rec reduce (r': Reduction) (e': Expression) =
+        match e' with
+        | (Application ((Lambda (x, body) ), arg)) -> 
+            match r' with
+            | Normal -> Some (substitute x arg body)
+            | Applicative ->
+                match reduce r' arg with
+                | Some (arg') -> Some ( Application (Lambda (x, body), arg'))
+                | None -> None
+        | Application (f, x) -> 
+            match reduce r' x with
+            | Some x' -> Some (Application (f, x'))
+            | None -> None 
+        | Lambda (x, body) ->
+            match reduce r' body with
+            | Some (body') -> Some ( Lambda (x, body') )
             | None -> None
-    | Application (f, x) -> 
-        match reduce type' x with
-        | Some x' -> Some (Application (f, x'))
-        | None -> None 
-    | Lambda (x, body) ->
-        match reduce type' body with
-        | Some (body') -> Some ( Lambda (x, body') )
-        | None -> None
-    | _ -> None
+        | _ -> None
+
+    match reduce r e with
+    | Some (e') -> evalExpression r e'
+    | None -> e
+
+let rec expandAll (stmts: List<Statement>) : List<Statement> =
+
+    let rec expandVars (env: List<Statement>) (e: Expression) : Expression =
+
+        let rec lookupAssign (s: string) (stmts': List<Statement>) : Expression option =
+            match stmts' with
+            | [] -> None
+            | (stmt :: stmts') ->
+                match stmt with
+                | Assign (name, e) ->
+                    if name.Equals(s) then Some e else lookupAssign s stmts'
+                | Import _ -> lookupAssign s stmts'
+                | Comment _ -> lookupAssign s stmts'
+
+        match e with
+        | Variable x ->
+            match lookupAssign x env with
+            | Some (Natural n) -> nToChurch n
+            | Some (e) -> expandVars env e
+            | None -> Variable x // Free variable
+        | Lambda (x, body) -> Lambda (x, (expandVars env body))
+        | Application (f, a) -> Application (expandVars env f, expandVars env a)
+        | Natural n -> Natural n
+
+    let rec expandAllReversed (stmts': List<Statement>) : List<Statement> =
+        match stmts' with
+        | [] -> []
+        | (Assign (name', e))::stmts' -> Assign (name', (convertNaturals ( expandVars (Assign (name', e) :: stmts') (Variable name')))) :: expandAllReversed stmts'
+        | stmt::stmts' -> stmt :: expandAllReversed stmts'
+
+    List.rev (expandAllReversed (List.rev stmts))
+
+
+let rec expandImports (stmt: List<Statement>) : string =
+    match stmt with
+    | [] -> ""
+    | stmt :: stmts ->
+        match stmt with  
+        | Import fileName ->
+            let content = System.IO.File.ReadAllText(fileName + ".lam", System.Text.Encoding.UTF8)
+            content + expandImports stmts
+
+        | _ -> expandImports stmts
+
+    
+printfn "%A" (parseProgram "main=λ n m. λ f x. n f (m f x) 10 1;")
