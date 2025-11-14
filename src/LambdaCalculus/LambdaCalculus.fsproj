@@ -15,7 +15,14 @@
 	</PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="LambdaCalculusInterpreter.fs" />
+	  <Compile Include="Types.fs" />
+	  <Compile Include="Prelude.fs" />
+	  <Compile Include="Parser.fs" />
+	  <Compile Include="Substitution.fs" />
+	  <Compile Include="Evaluator.fs" />
+	  <Compile Include="Expander.fs" />
+	  <Compile Include="Runner.fs" />
+	<Compile Include="LambdaCalculusInterpreter.fs" />
   </ItemGroup>
 
   <ItemGroup>

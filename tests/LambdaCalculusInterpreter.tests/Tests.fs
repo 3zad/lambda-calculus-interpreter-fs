@@ -1,7 +1,9 @@
 ﻿module Tests
 
 open Xunit
-open LambdaCalculusInterpreter
+open Types
+open Substitution
+open Evaluator
 
 // ---------- Beta Reduction Tests ---------- //
 [<Fact>]
