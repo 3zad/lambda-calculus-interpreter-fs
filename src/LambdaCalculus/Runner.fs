@@ -13,6 +13,11 @@ let parseProgram (s: string) : List<Statement> =
     | Failure (msg, _, _) -> failwith msg
 
 let run' (s: string) : Expression option =
-    let fullProgram = header + s
+    let fullProgram = pureHeader + s
     let expanded = expandAll (parseProgram fullProgram)
+    getMain expanded
+
+let runFast (s: string) : Expression option =
+    let fullProgram = fastHeader + s
+    let expanded = expandAllNoChurch (parseProgram fullProgram)
     getMain expanded

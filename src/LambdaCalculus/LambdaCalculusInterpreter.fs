@@ -21,7 +21,7 @@ let exec (r: Reduction) (filePath: string) : unit =
 
         let stmts = parseProgram content
         let importedContent = expandImports stmts
-        let fullProgram = header + importedContent + content
+        let fullProgram = pureHeader + importedContent + content
 
         match run' fullProgram with
         | Some e ->
@@ -41,7 +41,7 @@ let transpile (inputFileName: string) (outputFileName: string) : unit =
 
         let stmts = parseProgram content 
         let importedContent = expandImports stmts
-        let fullProgram = header + importedContent + content
+        let fullProgram = pureHeader + importedContent + content
 
         let exprs = expandAll (parseProgram fullProgram)
         let output =
@@ -58,7 +58,7 @@ let transpile (inputFileName: string) (outputFileName: string) : unit =
 let execs (r: Reduction) (s: string) : Result<string, string> =
     let stmts = parseProgram s
     let importedContent = expandImports stmts
-    let fullProgram = header + importedContent + s
+    let fullProgram = pureHeader + importedContent + s
 
     match run' fullProgram with
     | Some e ->
@@ -70,10 +70,25 @@ let execs (r: Reduction) (s: string) : Result<string, string> =
     | None ->
         Result.Error "Error during execution. Check syntax."
 
+let execsFast (r: Reduction) (s: string) : Result<string, string> =
+    let stmts = parseProgram s
+    let importedContent = expandImports stmts
+    let fullProgram = fastHeader + importedContent + s
+
+    match runFast fullProgram with
+    | Some e ->
+        let evaluated = fastEvalExpression r e
+        match Some(evaluated) with
+        | Some (Natural n) -> Result.Ok (exprToString (Natural n))
+        | Some other -> Result.Ok (exprToString other)
+        | None -> Result.Ok (exprToString evaluated)
+    | None ->
+        Result.Error "Error during execution. Check syntax."
+
 let transpiles (s: string) : Result<string, string> =
     let stmts = parseProgram s
     let importedContent = expandImports stmts
-    let fullProgram = header + importedContent + s
+    let fullProgram = pureHeader + importedContent + s
 
     let exprs = expandAll (parseProgram fullProgram)
     match getMain exprs with

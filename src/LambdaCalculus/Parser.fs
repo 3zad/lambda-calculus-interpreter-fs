@@ -24,6 +24,11 @@ let name : Parser<string, unit> =
     letter .>>. manyChars variableName
     |>> fun (c, s) -> string c + s
 
+// Bigint parser
+let pBigInt : Parser<bigint, unit> =
+    many1SatisfyL System.Char.IsDigit "bigint"
+    |>> (fun digits -> bigint.Parse digits)
+
 module public ExprParser =
     let expr, exprRef = createParserForwardedToRef<Expression, unit>()
 
@@ -40,7 +45,7 @@ module public ExprParser =
         lexeme (
             (parens expr) 
             <|> (name |>> Variable) 
-            <|> (integer |>> Natural)
+            <|> (pBigInt |>> Natural)
         )
 
     // Parser for applications

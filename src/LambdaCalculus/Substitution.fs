@@ -78,7 +78,7 @@ let rec churchToN (e: Expression) : Expression option =
     match e with
     | Lambda (f, Lambda (x, body)) ->
         match countApps body f x with
-        | Some n -> Some (Natural n)
+        | Some n -> Some (Natural (bigint n))
         | None -> Some body
     | Application (f, a) ->
         match churchToN f with
@@ -90,7 +90,7 @@ let rec churchToN (e: Expression) : Expression option =
 // Convert all natural numbers to church encoding for pure lambda calculus.
 let rec convertNaturals (e: Expression) : Expression =
     match e with
-    | Natural n -> nToChurch n
+    | Natural n -> nToChurch (int n)
     | Variable x -> Variable x
     | Lambda (x, body) -> Lambda (x, convertNaturals body)
     | Application (f, a) -> Application (convertNaturals f, convertNaturals a)

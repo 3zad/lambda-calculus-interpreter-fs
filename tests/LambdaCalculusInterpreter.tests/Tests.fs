@@ -1,6 +1,7 @@
 ﻿module Tests
 
 open Xunit
+open Math
 open Types
 open Substitution
 open Evaluator
@@ -40,5 +41,24 @@ let ``convert 2 to church and back`` () =
     let church2 = nToChurch 2
     let back = churchToN church2
     match back with
-    | Some (Natural 2) -> Assert.True(true)
+    | Some (Natural n) when n = bigint 2 -> Assert.True(true)
     | _ -> Assert.Fail("Church numeral conversion failed")
+
+
+// ---------- Math ---------- //
+[<Fact>]
+let ``factorial of 10`` () =
+    let ten = bigint 10
+    let factTen = factorial ten
+    match factTen with
+    | n when n.Equals(bigint 3628800) -> Assert.True(true)
+    | _ -> Assert.Fail("Factorial failed")
+
+[<Fact>]
+let ``power of 9 to the 4th`` () =
+    let nine = bigint 9
+    let four = bigint 4
+    let product = power nine four
+    match product with
+    | n when n.Equals(bigint 6561) -> Assert.True(true)
+    | _ -> Assert.Fail("Factorial failed")

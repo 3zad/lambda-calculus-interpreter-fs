@@ -5,7 +5,7 @@ type Expression =
     | Lambda of string * Expression
     | Application of Expression * Expression
     | Variable of string
-    | Natural of int
+    | Natural of bigint
 
 // Top-level variables and a pure lambda-calculus expression
 type Global =
