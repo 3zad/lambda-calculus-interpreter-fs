@@ -48,7 +48,15 @@ let rec fastEvalExpression (r: Reduction) (e: Expression) =
 
     // Beta reduction helper function
     let rec reduce (r: Reduction) (e: Expression) : Expression option =
-        printfn "%A" e
+        
+        let rec toNat r e =
+            match e with
+            | Natural n -> Some n
+            | _ ->
+                match reduce r e with
+                | Some e' -> toNat r e'
+                | None -> None
+        
         match e with
         // Hotwiring section
         | Application(Variable "succ", Natural n) ->
@@ -58,73 +66,30 @@ let rec fastEvalExpression (r: Reduction) (e: Expression) =
             | Some (Natural n) -> Some(Natural (n + 1I))
             | _ -> None
 
-        | Application(Application(Variable "add", Natural n), Natural m) ->
-            Some(Natural (n + m))
-        | Application(Application(Variable "add", e'), Natural m) ->
-            match reduce r e' with
-            | Some (Natural n) -> Some(Natural (n + m))
-            | _ -> None
-        | Application(Application(Variable "add", Natural n), e') ->
-            match reduce r e' with
-            | Some (Natural m) -> Some(Natural (n + m))
-            | _ -> None
-        | Application(Application(Variable "add", e'), e'') ->
-            match reduce r e' with
-            | Some (Natural m) -> 
-                match reduce r e'' with
-                | Some (Natural n) -> Some(Natural (n + m))
-                | _ -> None
+        | Application(Application(Variable "add", x), y) ->
+            match toNat r x, toNat r y with
+            | Some n, Some m -> Some (Natural (n + m))
             | _ -> None
 
-        | Application(Application(Variable "sub", Natural n), Natural m) ->
-            Some(Natural (n - m))
-        | Application(Application(Variable "sub", e'), Natural m) ->
-            match reduce r e' with
-            | Some (Natural n) -> Some(Natural (n - m))
-            | _ -> None
-        | Application(Application(Variable "sub", Natural n), e') ->
-            match reduce r e' with
-            | Some (Natural m) -> Some(Natural (n - m))
-            | _ -> None
-        | Application(Application(Variable "sub", e'), e'') ->
-            match reduce r e' with
-            | Some (Natural n) -> 
-                match reduce r e'' with
-                | Some (Natural m) -> Some(Natural (n - m))
-                | _ -> None
+        | Application(Application(Variable "sub", x), y) ->
+            match toNat r x, toNat r y with
+            | Some n, Some m -> Some (Natural (n - m))
             | _ -> None
 
 
-        | Application(Application(Variable "mul", Natural n), Natural m) ->
-            Some(Natural (n * m))
-        | Application(Application(Variable "mul", e'), Natural m) ->
-            match reduce r e' with
-            | Some (Natural n) -> Some(Natural (n * m))
-            | _ -> None
-        | Application(Application(Variable "mul", Natural n), e') ->
-            match reduce r e' with
-            | Some (Natural m) -> Some(Natural (n * m))
-            | _ -> None
-        | Application(Application(Variable "mul", e'), e'') ->
-            match reduce r e' with
-            | Some (Natural m) -> 
-                match reduce r e'' with
-                | Some (Natural n) -> Some(Natural (n * m))
-                | _ -> None
+        | Application(Application(Variable "mul", x), y) ->
+            match toNat r x, toNat r y with
+            | Some n, Some m -> Some (Natural (n * m))
             | _ -> None
 
-        | Application(Application(Variable "pow", Natural n), Natural m) ->
-            Some(Natural (power n m))
-        | Application(Application(Variable "pow", e'), Natural m) ->
-            match reduce r e' with
-            | Some (Natural n) -> Some(Natural (power n m))
+        | Application(Application(Variable "pow", x), y) ->
+            match toNat r x, toNat r y with
+            | Some n, Some m -> Some (Natural (power n m))
             | _ -> None
 
-        | Application(Variable "fact", Natural n) ->
-            Some(Natural (factorial n))
-        | Application(Variable "fact", e') ->
-            match reduce r e' with
-            | Some (Natural n) -> Some(Natural (factorial n))
+        | Application(Variable "fact", x) ->
+            match toNat r x with
+            | Some n -> Some (Natural (factorial n))
             | _ -> None
         // End of hotwiring section
 

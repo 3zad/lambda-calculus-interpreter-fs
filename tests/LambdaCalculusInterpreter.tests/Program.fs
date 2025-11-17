@@ -14,7 +14,7 @@ let main _ =
     | Result.Ok x -> printfn "%A" x
     | Result.Error _ -> printfn "Error"
 
-    // Factorial of 10000 (huuuge number)
+    // Fully-fledged example
     match execsFast Normal """
         % NB! Running in applicative mode is many times faster!
 
@@ -33,9 +33,12 @@ let main _ =
         result1 = add doubleTen halfHundred; % 110 + 50 = 160
         result2 = sub (mul ten twenty) (add fifty ten); % 200 - 60 = 140
 
+        % Recursion doesn't work
+        % liida = λ n m. cond (iszero n) m (liida (sub n 1) (add m 1));
 
         % Main method combines arithmetic and logical checks
-        main = add (add result1 result2) (succ ten); % (160 + 140) + 11 = 311
+        main = fact( add result2 (add (add result1 result2) (succ ten) ) ); % (140 + (160 + 140) + 11)! =~ 7.8175e29
+
     """ with
     | Result.Ok x -> printfn "%A" x
     | Result.Error _ -> printfn "Error"
