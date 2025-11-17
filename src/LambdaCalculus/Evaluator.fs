@@ -48,13 +48,32 @@ let rec fastEvalExpression (r: Reduction) (e: Expression) =
 
     // Beta reduction helper function
     let rec reduce (r: Reduction) (e: Expression) : Expression option =
+        printfn "%A" e
         match e with
         // Hotwiring section
+        | Application(Variable "succ", Natural n) ->
+            Some(Natural (n + 1I))
+        | Application(Variable "succ", e') ->
+            match reduce r e' with
+            | Some (Natural n) -> Some(Natural (n + 1I))
+            | _ -> None
+
         | Application(Application(Variable "add", Natural n), Natural m) ->
             Some(Natural (n + m))
         | Application(Application(Variable "add", e'), Natural m) ->
             match reduce r e' with
             | Some (Natural n) -> Some(Natural (n + m))
+            | _ -> None
+        | Application(Application(Variable "add", Natural n), e') ->
+            match reduce r e' with
+            | Some (Natural m) -> Some(Natural (n + m))
+            | _ -> None
+        | Application(Application(Variable "add", e'), e'') ->
+            match reduce r e' with
+            | Some (Natural m) -> 
+                match reduce r e'' with
+                | Some (Natural n) -> Some(Natural (n + m))
+                | _ -> None
             | _ -> None
 
         | Application(Application(Variable "sub", Natural n), Natural m) ->
@@ -63,12 +82,35 @@ let rec fastEvalExpression (r: Reduction) (e: Expression) =
             match reduce r e' with
             | Some (Natural n) -> Some(Natural (n - m))
             | _ -> None
+        | Application(Application(Variable "sub", Natural n), e') ->
+            match reduce r e' with
+            | Some (Natural m) -> Some(Natural (n - m))
+            | _ -> None
+        | Application(Application(Variable "sub", e'), e'') ->
+            match reduce r e' with
+            | Some (Natural n) -> 
+                match reduce r e'' with
+                | Some (Natural m) -> Some(Natural (n - m))
+                | _ -> None
+            | _ -> None
+
 
         | Application(Application(Variable "mul", Natural n), Natural m) ->
             Some(Natural (n * m))
         | Application(Application(Variable "mul", e'), Natural m) ->
             match reduce r e' with
             | Some (Natural n) -> Some(Natural (n * m))
+            | _ -> None
+        | Application(Application(Variable "mul", Natural n), e') ->
+            match reduce r e' with
+            | Some (Natural m) -> Some(Natural (n * m))
+            | _ -> None
+        | Application(Application(Variable "mul", e'), e'') ->
+            match reduce r e' with
+            | Some (Natural m) -> 
+                match reduce r e'' with
+                | Some (Natural n) -> Some(Natural (n * m))
+                | _ -> None
             | _ -> None
 
         | Application(Application(Variable "pow", Natural n), Natural m) ->
@@ -118,7 +160,7 @@ let rec fastEvalExpression (r: Reduction) (e: Expression) =
         | _ -> None
 
     match reduce r e with
-    | Some (e') -> evalExpression r e'
+    | Some (e') -> fastEvalExpression r e'
     | None -> e
 
 
