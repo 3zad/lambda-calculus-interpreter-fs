@@ -7,6 +7,13 @@ type Expression =
     | Variable of string
     | Natural of bigint
 
+let rec exprToString (expr: Expression) : string =
+    match expr with
+    | Variable x -> x
+    | Natural n -> n.ToString()
+    | Lambda (x, e) -> sprintf "λ%s. (%s)" x (exprToString e)
+    | Application (f, a) -> sprintf "(%s) (%s)" (exprToString f) (exprToString a)
+
 // Top-level variables and a pure lambda-calculus expression
 type Global =
     | Def of string
@@ -22,11 +29,3 @@ type Statement =
 type Reduction =
     | Normal
     | Applicative
-
-
-let rec exprToString (expr: Expression) : string =
-    match expr with
-    | Variable x -> x
-    | Natural n -> n.ToString()
-    | Lambda (x, e) -> sprintf "λ%s. (%s)" x (exprToString e)
-    | Application (f, a) -> sprintf "(%s) (%s)" (exprToString f) (exprToString a)

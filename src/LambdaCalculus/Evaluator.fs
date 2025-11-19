@@ -49,48 +49,39 @@ let rec fastEvalExpression (r: Reduction) (e: Expression) =
     // Beta reduction helper function
     let rec reduce (r: Reduction) (e: Expression) : Expression option =
         
-        let rec toNat r e =
+        let rec toNat (r: Reduction) (e: Expression) : bigint option =
             match e with
             | Natural n -> Some n
             | _ ->
                 match reduce r e with
                 | Some e' -> toNat r e'
                 | None -> None
-        
+
         match e with
+
         // Hotwiring section
-        | Application(Variable "succ", Natural n) ->
-            Some(Natural (n + 1I))
-        | Application(Variable "succ", e') ->
-            match reduce r e' with
-            | Some (Natural n) -> Some(Natural (n + 1I))
+        | Application(Variable "iszero", e) ->
+            match toNat r e with
+            | Some n -> if n = 0I then Some (Variable "true") else Some (Variable "false")
+            | None -> None
+
+        | Application(Application(Application(Variable "cond", p), t), e) ->
+            match reduce r p with
+            | Some (Variable "true") -> Some t
+            | Some (Variable "false") -> Some e
             | _ -> None
 
-        | Application(Application(Variable "add", x), y) ->
-            match toNat r x, toNat r y with
-            | Some n, Some m -> Some (Natural (n + m))
-            | _ -> None
+        | Application(Variable "succ", Natural n) -> Some (Natural (n+1I))
 
-        | Application(Application(Variable "sub", x), y) ->
-            match toNat r x, toNat r y with
-            | Some n, Some m -> Some (Natural (n - m))
-            | _ -> None
+        | Application(Application(Variable "add", Natural n), Natural m) -> Some (Natural (n + m))
 
+        | Application(Application(Variable "sub", Natural n), Natural m) -> Some (Natural (n - m))
 
-        | Application(Application(Variable "mul", x), y) ->
-            match toNat r x, toNat r y with
-            | Some n, Some m -> Some (Natural (n * m))
-            | _ -> None
+        | Application(Application(Variable "mul", Natural n), Natural m) -> Some (Natural (n * m))
 
-        | Application(Application(Variable "pow", x), y) ->
-            match toNat r x, toNat r y with
-            | Some n, Some m -> Some (Natural (power n m))
-            | _ -> None
+        | Application(Application(Variable "pow", Natural n), Natural m) -> Some (Natural (power n m))
 
-        | Application(Variable "fact", x) ->
-            match toNat r x with
-            | Some n -> Some (Natural (factorial n))
-            | _ -> None
+        | Application(Variable "fact", Natural n) -> Some (Natural (factorial n))
         // End of hotwiring section
 
         | Application (Lambda(x, body), arg) ->

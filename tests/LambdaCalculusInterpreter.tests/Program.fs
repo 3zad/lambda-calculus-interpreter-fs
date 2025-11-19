@@ -42,4 +42,7 @@ let main _ =
     """ with
     | Result.Ok x -> printfn "%A" x
     | Result.Error _ -> printfn "Error"
+
+    printfn "%A" (execsFast Normal "liida = λ n m. cond (iszero n) m (liida (sub n 1) (add m 1));main=liida 1 2;")
+
     0
