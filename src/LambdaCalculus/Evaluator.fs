@@ -84,7 +84,6 @@ let rec fastEvalExpression (r: Reduction) (e: Expression) =
         | Application(Variable "fact", Natural n) -> Some (Natural (factorial n))
 
         | Application (Variable "print", e') ->
-            printfn "%A" e'
             match reduce r e' with
             | Some (Variable x) -> 
                 printfn "%A" x

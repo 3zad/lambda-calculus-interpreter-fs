@@ -15,47 +15,7 @@ open Substitution
 open Expander
 
 
-let exec (r: Reduction) (filePath: string) : unit =
-    try
-        let content = System.IO.File.ReadAllText(filePath)
-
-        let stmts = parseProgram content
-        let importedContent = expandImports stmts
-        let fullProgram = pureHeader + importedContent + content
-
-        match run' fullProgram with
-        | Some e ->
-            let evaluated = evalExpression r e
-            match churchToN evaluated with
-            | Some (Natural n) -> printfn "%A" n
-            | Some other -> printfn "%A" other
-            | None -> printfn "%A" evaluated
-        | None ->
-            printfn "Error during execution. Check syntax."
-    with
-    | ex -> printfn "Error reading file: %s" ex.Message
-
-let transpile (inputFileName: string) (outputFileName: string) : unit =
-    try
-        let content = System.IO.File.ReadAllText(inputFileName)
-
-        let stmts = parseProgram content 
-        let importedContent = expandImports stmts
-        let fullProgram = pureHeader + importedContent + content
-
-        let exprs = expandAll (parseProgram fullProgram)
-        let output =
-            match getMain exprs with
-            | Some e -> "main="+ exprToString e + ";" // Wrap it in an entry point
-            | None -> "Error: No main expression found."
-
-        System.IO.File.WriteAllText(outputFileName, output)
-
-    with
-    | ex ->
-        System.IO.File.WriteAllText(outputFileName, $"Error reading input file: {ex.Message}")
-
-let fullProgram (s: string) : Result<string, string> =
+let fullProgramPure (s: string) : Result<string, string> =
     try
         let stmts = parseProgram s
         let importedContent = expandImports stmts
@@ -63,8 +23,57 @@ let fullProgram (s: string) : Result<string, string> =
     with ex ->
         Result.Error "Error during parsing"
 
+let fullProgramFast (s: string) : Result<string, string> =
+    try
+        let stmts = parseProgram s
+        let importedContent = expandImports stmts
+        Result.Ok (fastHeader + importedContent + s)
+    with ex ->
+        Result.Error "Error during parsing"
+
+let exec (r: Reduction) (filePath: string) : unit =
+    try
+        let content : string = System.IO.File.ReadAllText(filePath)
+
+        match fullProgramPure content with
+        | Result.Ok fp ->
+            match run' fp with
+                | Some e ->
+                    let evaluated = evalExpression r e
+                    match churchToN evaluated with
+                    | Some (Natural n) -> printfn "%A" n
+                    | Some other -> printfn "%A" other
+                    | None -> printfn "%A" evaluated
+                | None ->
+                    printfn "Error during execution. Check syntax."
+
+        | Result.Error err -> printfn "Error during parsing"
+    with
+    | ex -> printfn "Error reading file: %s" ex.Message
+
+let transpile (inputFileName: string) (outputFileName: string) : unit =
+    try
+        let content : string = System.IO.File.ReadAllText(inputFileName)
+
+        match fullProgramPure content with
+        | Result.Ok fp ->
+
+            let exprs = expandAll (parseProgram fp)
+            let output =
+                match getMain exprs with
+                | Some e -> "main="+ exprToString e + ";" // Wrap it in an entry point
+                | None -> "Error: No main expression found."
+
+            System.IO.File.WriteAllText(outputFileName, output)
+        | Result.Error err -> printfn "Error saving"
+
+    with
+    | ex ->
+        System.IO.File.WriteAllText(outputFileName, $"Error reading input file: {ex.Message}")
+
+
 let execs (r: Reduction) (s: string) : Result<string, string> =
-    let fullProgram = fullProgram s
+    let fullProgram = fullProgramPure s
 
     match fullProgram with
         | Result.Ok fp ->
@@ -92,13 +101,13 @@ let execsFast (r: Reduction) (s: string) : Result<string, string> =
                 runEverythingInProgram ss
             | _ -> runEverythingInProgram ss
 
-    let fullProgram = fullProgram s
+    let fullProgram = fullProgramFast s
     match fullProgram with
     | Result.Ok fp -> runEverythingInProgram (runFast fp)
     | Result.Error err -> Result.Error err
 
 let transpiles (s: string) : Result<string, string> =
-    let fullProgram = fullProgram s
+    let fullProgram = fullProgramPure s
 
     match fullProgram with
     | Result.Ok fp ->

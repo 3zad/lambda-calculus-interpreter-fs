@@ -36,7 +36,7 @@ let main _ =
         % Recursion
         addRec = λ n m. cond (iszero n) m (addRec (sub n 1) (add m 1));
 
-        print (1 2);
+        print (add 2 2);
 
         h = fact( add result2 (add (add result1 result2) (addRec (succ ten) (3)) ) ); % (140 + (160 + 140) + (11 + 3))! =~ 7.2670e1101
         %print h;
