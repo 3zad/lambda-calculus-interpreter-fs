@@ -77,15 +77,11 @@ let execsFast (r: Reduction) (s: string) : Result<string, string> =
 
     let rec runEverythingInProgram (ss: List<Statement>) : Result<string, string> =
         match ss with
-        | [] -> Result.Ok("Done executing")
+        | [] -> Result.Ok "Done executing"
         | s::ss -> 
             match s with
             | Execute e -> 
-                let evaluated = fastEvalExpression r e
-                match Some(evaluated) with
-                | result ->
-                    printfn "%A" result
-                
+                fastEvalExpression r e |> ignore
                 runEverythingInProgram ss
             | _ -> runEverythingInProgram ss
 

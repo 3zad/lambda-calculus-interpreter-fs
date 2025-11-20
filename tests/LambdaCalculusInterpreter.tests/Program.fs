@@ -10,7 +10,7 @@ open Expander
 [<EntryPoint>]
 let main _ = 
     // Fast multiplication of two huge numbers which would be computationally impossible with church encoding
-    match execsFast Normal "x=486975092587932083745963507549530;mul x 98576978450049586794576983657098;" with
+    match execsFast Normal "x=486975092587932083745963507549530;result = mul x 98576978450049586794576983657098;print result;" with
     | Result.Ok x -> printfn "%A" x
     | Result.Error _ -> printfn "Error"
 
@@ -36,8 +36,10 @@ let main _ =
         % Recursion
         addRec = λ n m. cond (iszero n) m (addRec (sub n 1) (add m 1));
 
-        % Main method combines arithmetic and logical checks
-        fact( add result2 (add (add result1 result2) (addRec (succ ten) (3)) ) ); % (140 + (160 + 140) + (11 + 3))! =~ 7.2670e1101
+        print (1 2);
+
+        h = fact( add result2 (add (add result1 result2) (addRec (succ ten) (3)) ) ); % (140 + (160 + 140) + (11 + 3))! =~ 7.2670e1101
+        %print h;
 
     """ with
     | Result.Ok x -> printfn "%A" x
@@ -45,7 +47,7 @@ let main _ =
 
     // Recursion testing
     match execsFast Normal """
-        print hello;
+        print (add 1 2);
         numInput = input;
         cond (iszero 1) 1 (2);
     """ with
