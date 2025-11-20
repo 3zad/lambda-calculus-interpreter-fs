@@ -82,21 +82,6 @@ let rec fastEvalExpression (r: Reduction) (e: Expression) =
         | Application(Application(Variable "pow", Natural n), Natural m) -> Some (Natural (power n m))
 
         | Application(Variable "fact", Natural n) -> Some (Natural (factorial n))
-
-        | Application (Variable "print", e') ->
-            match reduce r e' with
-            | Some (Variable x) -> 
-                printfn "%A" x
-                None
-            | Some (Natural n) -> 
-                printfn "%A" n
-                None
-            | Some (other) -> 
-                printfn "%A" (exprToString other)
-                None
-            | _ -> 
-                printfn ""
-                None
         // End of hotwiring section
 
         | Application (Lambda(x, body), arg) ->
@@ -134,6 +119,12 @@ let rec fastEvalExpression (r: Reduction) (e: Expression) =
     | Some (e') -> fastEvalExpression r e'
     | None -> e
 
+let evalExecution (e: Expression) : string =
+    match e with
+    | Application(Variable ("print"), expr) ->
+        match fastEvalExpression Normal expr with
+        | e' -> exprToString e'
+    | _ -> ""
 
 let rec expandAll (stmts: List<Statement>) : List<Statement> =
 

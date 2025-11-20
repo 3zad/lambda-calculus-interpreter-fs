@@ -49,7 +49,8 @@ let main _ =
     match execsFast Normal """
         print (add 1 2);
         numInput = input;
-        cond (iszero 1) 1 (2);
+        print (cond (iszero 1) 1 (20));
+
     """ with
     | Result.Ok x -> printfn "%A" x
     | Result.Error _ -> printfn "Error"

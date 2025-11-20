@@ -91,19 +91,18 @@ let execs (r: Reduction) (s: string) : Result<string, string> =
 
 let execsFast (r: Reduction) (s: string) : Result<string, string> =
 
-    let rec runEverythingInProgram (ss: List<Statement>) : Result<string, string> =
+    let rec runEverythingInProgram (ss: List<Statement>) : string =
         match ss with
-        | [] -> Result.Ok "Done executing"
+        | [] -> ""
         | s::ss -> 
             match s with
             | Execute e -> 
-                fastEvalExpression r e |> ignore
-                runEverythingInProgram ss
+                evalExecution (fastEvalExpression r e) + "\n" + (runEverythingInProgram ss)
             | _ -> runEverythingInProgram ss
 
     let fullProgram = fullProgramFast s
     match fullProgram with
-    | Result.Ok fp -> runEverythingInProgram (runFast fp)
+    | Result.Ok fp -> Result.Ok (runEverythingInProgram (runFast fp))
     | Result.Error err -> Result.Error err
 
 let transpiles (s: string) : Result<string, string> =
