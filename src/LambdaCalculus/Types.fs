@@ -14,18 +14,19 @@ let rec exprToString (expr: Expression) : string =
     | Lambda (x, e) -> sprintf "λ%s. (%s)" x (exprToString e)
     | Application (f, a) -> sprintf "(%s) (%s)" (exprToString f) (exprToString a)
 
-// Top-level variables and a pure lambda-calculus expression
-type Global =
-    | Def of string
-    | Pure of Expression
+// Reduction enum
+type Reduction =
+    | Normal
+    | Applicative
+
+
+
+// Syntactic sugar section
 
 // Comments, assignments of top-level variables, and file imports
 type Statement =
     | Comment of string
     | Assign of string * Expression
     | Import of string
+    | Execute of Expression
 
-// Reduction enum
-type Reduction =
-    | Normal
-    | Applicative

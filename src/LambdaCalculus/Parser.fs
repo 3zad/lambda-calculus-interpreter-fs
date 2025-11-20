@@ -86,10 +86,15 @@ module public StmtParser =
         (lexeme ExprParser.expr .>> lexeme (pchar ';'))
         |>> fun (varName, expr) -> Assign(varName, expr)
 
+    let execute =
+        (lexeme ExprParser.expr .>> lexeme (pchar ';'))
+        |>> fun (expr) -> Execute(expr)
+
     do stmtRef :=
         spaces >>. (
             attempt comment
             <|> attempt import
+            <|> attempt execute
             <|> assign
         )
 

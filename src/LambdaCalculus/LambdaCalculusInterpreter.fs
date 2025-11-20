@@ -75,15 +75,21 @@ let execsFast (r: Reduction) (s: string) : Result<string, string> =
     let importedContent = expandImports stmts
     let fullProgram = fastHeader + importedContent + s
 
-    match runFast fullProgram with
-    | Some e ->
-        let evaluated = fastEvalExpression r e
-        match Some(evaluated) with
-        | Some (Natural n) -> Result.Ok (exprToString (Natural n))
-        | Some other -> Result.Ok (exprToString other)
-        | None -> Result.Ok (exprToString evaluated)
-    | None ->
-        Result.Error "Error during execution. Check syntax."
+    let rec runEverythingInProgram (ss: List<Statement>) : Result<string, string> =
+        match ss with
+        | [] -> Result.Ok("Done executing")
+        | s::ss -> 
+            match s with
+            | Execute e -> 
+                let evaluated = fastEvalExpression r e
+                match Some(evaluated) with
+                | result ->
+                    printfn "%A" result
+                
+                runEverythingInProgram ss
+            | _ -> runEverythingInProgram ss
+
+    runEverythingInProgram (runFast fullProgram)
 
 let transpiles (s: string) : Result<string, string> =
     let stmts = parseProgram s

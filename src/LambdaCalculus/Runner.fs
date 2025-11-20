@@ -17,7 +17,7 @@ let run' (s: string) : Expression option =
     let expanded = expandAll (parseProgram fullProgram)
     getMain expanded
 
-let runFast (s: string) : Expression option =
+let runFast (s: string) : List<Statement> =
     let fullProgram = fastHeader + s
     let expanded = expandAllNoChurch (parseProgram fullProgram)
-    getMain expanded
+    expanded

@@ -16,6 +16,7 @@ let rec checkRec (stmts: List<Statement>) : List<Statement> =
             else
                 e
         (Assign (name', eFinal)) :: checkRec stmts
+    | (Execute (e)) :: stmts -> [Execute e] @ checkRec stmts
 
 
 let rec getMain (stmts: List<Statement>) : Expression option =

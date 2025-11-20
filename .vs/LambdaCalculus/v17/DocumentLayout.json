@@ -3,24 +3,32 @@
   "WorkspaceRootPath": "C:\\Users\\zacharyalexander\\source\\repos\\LambdaCalculus\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{084304F4-9A2E-4BA5-A592-6F38BCA03FD8}|src\\LambdaCalculus\\LambdaCalculus.fsproj|c:\\users\\zacharyalexander\\source\\repos\\lambdacalculus\\src\\lambdacalculus\\evaluator.fs||{8A5AA6CF-46E3-4520-A70A-7393D15233E9}",
-      "RelativeMoniker": "D:0:0:{084304F4-9A2E-4BA5-A592-6F38BCA03FD8}|src\\LambdaCalculus\\LambdaCalculus.fsproj|solutionrelative:src\\lambdacalculus\\evaluator.fs||{8A5AA6CF-46E3-4520-A70A-7393D15233E9}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{40965C6D-0E83-41CC-96EF-FF159C8B0C47}|tests\\LambdaCalculusInterpreter.tests\\LambdaCalculusInterpreter.tests.fsproj|c:\\users\\zacharyalexander\\source\\repos\\lambdacalculus\\tests\\lambdacalculusinterpreter.tests\\program.fs||{8A5AA6CF-46E3-4520-A70A-7393D15233E9}",
       "RelativeMoniker": "D:0:0:{40965C6D-0E83-41CC-96EF-FF159C8B0C47}|tests\\LambdaCalculusInterpreter.tests\\LambdaCalculusInterpreter.tests.fsproj|solutionrelative:tests\\lambdacalculusinterpreter.tests\\program.fs||{8A5AA6CF-46E3-4520-A70A-7393D15233E9}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{084304F4-9A2E-4BA5-A592-6F38BCA03FD8}|src\\LambdaCalculus\\LambdaCalculus.fsproj|c:\\users\\zacharyalexander\\source\\repos\\lambdacalculus\\src\\lambdacalculus\\types.fs||{8A5AA6CF-46E3-4520-A70A-7393D15233E9}",
-      "RelativeMoniker": "D:0:0:{084304F4-9A2E-4BA5-A592-6F38BCA03FD8}|src\\LambdaCalculus\\LambdaCalculus.fsproj|solutionrelative:src\\lambdacalculus\\types.fs||{8A5AA6CF-46E3-4520-A70A-7393D15233E9}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{084304F4-9A2E-4BA5-A592-6F38BCA03FD8}|src\\LambdaCalculus\\LambdaCalculus.fsproj|c:\\users\\zacharyalexander\\source\\repos\\lambdacalculus\\src\\lambdacalculus\\prelude.fs||{8A5AA6CF-46E3-4520-A70A-7393D15233E9}",
-      "RelativeMoniker": "D:0:0:{084304F4-9A2E-4BA5-A592-6F38BCA03FD8}|src\\LambdaCalculus\\LambdaCalculus.fsproj|solutionrelative:src\\lambdacalculus\\prelude.fs||{8A5AA6CF-46E3-4520-A70A-7393D15233E9}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{084304F4-9A2E-4BA5-A592-6F38BCA03FD8}|src\\LambdaCalculus\\LambdaCalculus.fsproj|c:\\users\\zacharyalexander\\source\\repos\\lambdacalculus\\src\\lambdacalculus\\lambdacalculusinterpreter.fs||{8A5AA6CF-46E3-4520-A70A-7393D15233E9}",
       "RelativeMoniker": "D:0:0:{084304F4-9A2E-4BA5-A592-6F38BCA03FD8}|src\\LambdaCalculus\\LambdaCalculus.fsproj|solutionrelative:src\\lambdacalculus\\lambdacalculusinterpreter.fs||{8A5AA6CF-46E3-4520-A70A-7393D15233E9}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{084304F4-9A2E-4BA5-A592-6F38BCA03FD8}|src\\LambdaCalculus\\LambdaCalculus.fsproj|c:\\users\\zacharyalexander\\source\\repos\\lambdacalculus\\src\\lambdacalculus\\substitution.fs||{8A5AA6CF-46E3-4520-A70A-7393D15233E9}",
+      "RelativeMoniker": "D:0:0:{084304F4-9A2E-4BA5-A592-6F38BCA03FD8}|src\\LambdaCalculus\\LambdaCalculus.fsproj|solutionrelative:src\\lambdacalculus\\substitution.fs||{8A5AA6CF-46E3-4520-A70A-7393D15233E9}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{084304F4-9A2E-4BA5-A592-6F38BCA03FD8}|src\\LambdaCalculus\\LambdaCalculus.fsproj|c:\\users\\zacharyalexander\\source\\repos\\lambdacalculus\\src\\lambdacalculus\\parser.fs||{8A5AA6CF-46E3-4520-A70A-7393D15233E9}",
+      "RelativeMoniker": "D:0:0:{084304F4-9A2E-4BA5-A592-6F38BCA03FD8}|src\\LambdaCalculus\\LambdaCalculus.fsproj|solutionrelative:src\\lambdacalculus\\parser.fs||{8A5AA6CF-46E3-4520-A70A-7393D15233E9}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{084304F4-9A2E-4BA5-A592-6F38BCA03FD8}|src\\LambdaCalculus\\LambdaCalculus.fsproj|c:\\users\\zacharyalexander\\source\\repos\\lambdacalculus\\src\\lambdacalculus\\evaluator.fs||{8A5AA6CF-46E3-4520-A70A-7393D15233E9}",
+      "RelativeMoniker": "D:0:0:{084304F4-9A2E-4BA5-A592-6F38BCA03FD8}|src\\LambdaCalculus\\LambdaCalculus.fsproj|solutionrelative:src\\lambdacalculus\\evaluator.fs||{8A5AA6CF-46E3-4520-A70A-7393D15233E9}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{084304F4-9A2E-4BA5-A592-6F38BCA03FD8}|src\\LambdaCalculus\\LambdaCalculus.fsproj|c:\\users\\zacharyalexander\\source\\repos\\lambdacalculus\\src\\lambdacalculus\\expander.fs||{8A5AA6CF-46E3-4520-A70A-7393D15233E9}",
+      "RelativeMoniker": "D:0:0:{084304F4-9A2E-4BA5-A592-6F38BCA03FD8}|src\\LambdaCalculus\\LambdaCalculus.fsproj|solutionrelative:src\\lambdacalculus\\expander.fs||{8A5AA6CF-46E3-4520-A70A-7393D15233E9}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{084304F4-9A2E-4BA5-A592-6F38BCA03FD8}|src\\LambdaCalculus\\LambdaCalculus.fsproj|c:\\users\\zacharyalexander\\source\\repos\\lambdacalculus\\src\\lambdacalculus\\runner.fs||{8A5AA6CF-46E3-4520-A70A-7393D15233E9}",
+      "RelativeMoniker": "D:0:0:{084304F4-9A2E-4BA5-A592-6F38BCA03FD8}|src\\LambdaCalculus\\LambdaCalculus.fsproj|solutionrelative:src\\lambdacalculus\\runner.fs||{8A5AA6CF-46E3-4520-A70A-7393D15233E9}"
     }
   ],
   "DocumentGroupContainers": [
@@ -30,17 +38,17 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "Program.fs",
               "DocumentMoniker": "C:\\Users\\zacharyalexander\\source\\repos\\LambdaCalculus\\tests\\LambdaCalculusInterpreter.tests\\Program.fs",
               "RelativeDocumentMoniker": "tests\\LambdaCalculusInterpreter.tests\\Program.fs",
               "ToolTip": "C:\\Users\\zacharyalexander\\source\\repos\\LambdaCalculus\\tests\\LambdaCalculusInterpreter.tests\\Program.fs",
               "RelativeToolTip": "tests\\LambdaCalculusInterpreter.tests\\Program.fs",
-              "ViewState": "AgIAABoAAAAAAAAAAAAAAC0AAAByAAAAAAAAAA==",
+              "ViewState": "AgIAACgAAAAAAAAAAAAUwDEAAAAWAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
               "WhenOpened": "2025-11-14T21:12:12.84Z",
               "IsPinned": true,
@@ -48,55 +56,80 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "Evaluator.fs",
-              "DocumentMoniker": "C:\\Users\\zacharyalexander\\source\\repos\\LambdaCalculus\\src\\LambdaCalculus\\Evaluator.fs",
-              "RelativeDocumentMoniker": "src\\LambdaCalculus\\Evaluator.fs",
-              "ToolTip": "C:\\Users\\zacharyalexander\\source\\repos\\LambdaCalculus\\src\\LambdaCalculus\\Evaluator.fs",
-              "RelativeToolTip": "src\\LambdaCalculus\\Evaluator.fs",
-              "ViewState": "AgIAADAAAAAAAAAAAAAAADwAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 3,
+              "Title": "Parser.fs",
+              "DocumentMoniker": "C:\\Users\\zacharyalexander\\source\\repos\\LambdaCalculus\\src\\LambdaCalculus\\Parser.fs",
+              "RelativeDocumentMoniker": "src\\LambdaCalculus\\Parser.fs",
+              "ToolTip": "C:\\Users\\zacharyalexander\\source\\repos\\LambdaCalculus\\src\\LambdaCalculus\\Parser.fs",
+              "RelativeToolTip": "src\\LambdaCalculus\\Parser.fs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2025-11-19T14:25:01.896Z",
-              "IsPinned": true,
+              "WhenOpened": "2025-11-20T00:16:03.556Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "Types.fs",
-              "DocumentMoniker": "C:\\Users\\zacharyalexander\\source\\repos\\LambdaCalculus\\src\\LambdaCalculus\\Types.fs",
-              "RelativeDocumentMoniker": "src\\LambdaCalculus\\Types.fs",
-              "ToolTip": "C:\\Users\\zacharyalexander\\source\\repos\\LambdaCalculus\\src\\LambdaCalculus\\Types.fs",
-              "RelativeToolTip": "src\\LambdaCalculus\\Types.fs",
-              "ViewState": "AgIAAA8AAAAAAAAAAAAAAB4AAAARAAAAAAAAAA==",
+              "Title": "Substitution.fs",
+              "DocumentMoniker": "C:\\Users\\zacharyalexander\\source\\repos\\LambdaCalculus\\src\\LambdaCalculus\\Substitution.fs",
+              "RelativeDocumentMoniker": "src\\LambdaCalculus\\Substitution.fs",
+              "ToolTip": "C:\\Users\\zacharyalexander\\source\\repos\\LambdaCalculus\\src\\LambdaCalculus\\Substitution.fs",
+              "RelativeToolTip": "src\\LambdaCalculus\\Substitution.fs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAzAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2025-11-19T15:11:10.658Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "Prelude.fs",
-              "DocumentMoniker": "C:\\Users\\zacharyalexander\\source\\repos\\LambdaCalculus\\src\\LambdaCalculus\\Prelude.fs",
-              "RelativeDocumentMoniker": "src\\LambdaCalculus\\Prelude.fs",
-              "ToolTip": "C:\\Users\\zacharyalexander\\source\\repos\\LambdaCalculus\\src\\LambdaCalculus\\Prelude.fs",
-              "RelativeToolTip": "src\\LambdaCalculus\\Prelude.fs",
-              "ViewState": "AgIAAAwAAAAAAAAAAAAAABUAAAAGAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2025-11-19T14:23:44.399Z",
+              "WhenOpened": "2025-11-20T00:16:03.008Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 4,
+              "Title": "Evaluator.fs",
+              "DocumentMoniker": "C:\\Users\\zacharyalexander\\source\\repos\\LambdaCalculus\\src\\LambdaCalculus\\Evaluator.fs",
+              "RelativeDocumentMoniker": "src\\LambdaCalculus\\Evaluator.fs",
+              "ToolTip": "C:\\Users\\zacharyalexander\\source\\repos\\LambdaCalculus\\src\\LambdaCalculus\\Evaluator.fs",
+              "RelativeToolTip": "src\\LambdaCalculus\\Evaluator.fs",
+              "ViewState": "AgIAALQAAAAAAAAAAAAcwLsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2025-11-20T00:16:01.557Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Expander.fs",
+              "DocumentMoniker": "C:\\Users\\zacharyalexander\\source\\repos\\LambdaCalculus\\src\\LambdaCalculus\\Expander.fs",
+              "RelativeDocumentMoniker": "src\\LambdaCalculus\\Expander.fs",
+              "ToolTip": "C:\\Users\\zacharyalexander\\source\\repos\\LambdaCalculus\\src\\LambdaCalculus\\Expander.fs",
+              "RelativeToolTip": "src\\LambdaCalculus\\Expander.fs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2025-11-20T00:15:54.061Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "Runner.fs",
+              "DocumentMoniker": "C:\\Users\\zacharyalexander\\source\\repos\\LambdaCalculus\\src\\LambdaCalculus\\Runner.fs",
+              "RelativeDocumentMoniker": "src\\LambdaCalculus\\Runner.fs",
+              "ToolTip": "C:\\Users\\zacharyalexander\\source\\repos\\LambdaCalculus\\src\\LambdaCalculus\\Runner.fs",
+              "RelativeToolTip": "src\\LambdaCalculus\\Runner.fs",
+              "ViewState": "AgIAAAcAAAAAAAAAAAAEwBMAAAAoAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2025-11-19T23:57:01.761Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
               "Title": "LambdaCalculusInterpreter.fs",
               "DocumentMoniker": "C:\\Users\\zacharyalexander\\source\\repos\\LambdaCalculus\\src\\LambdaCalculus\\LambdaCalculusInterpreter.fs",
               "RelativeDocumentMoniker": "src\\LambdaCalculus\\LambdaCalculusInterpreter.fs",
               "ToolTip": "C:\\Users\\zacharyalexander\\source\\repos\\LambdaCalculus\\src\\LambdaCalculus\\LambdaCalculusInterpreter.fs",
               "RelativeToolTip": "src\\LambdaCalculus\\LambdaCalculusInterpreter.fs",
-              "ViewState": "AgIAADsAAAAAAAAAAAAiwEkAAAAcAAAAAAAAAA==",
+              "ViewState": "AgIAAEcAAAAAAAAAAAAowFIAAAAbAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2025-11-19T14:20:09.132Z",
+              "WhenOpened": "2025-11-20T00:01:43.989Z",
               "EditorCaption": ""
             }
           ]

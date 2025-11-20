@@ -131,6 +131,7 @@ let rec expandAll (stmts: List<Statement>) : List<Statement> =
                 match stmt with
                 | Assign (name, e) ->
                     if name.Equals(s) then Some e else lookupAssign s stmts'
+                | Execute _ -> lookupAssign s stmts'
                 | Import _ -> lookupAssign s stmts'
                 | Comment _ -> lookupAssign s stmts'
 
@@ -166,6 +167,7 @@ let rec expandAllNoChurch (stmts: List<Statement>) : List<Statement> =
                     if name.Equals(s) then Some e else lookupAssign s stmts'
                 | Import _ -> lookupAssign s stmts'
                 | Comment _ -> lookupAssign s stmts'
+                | Execute _ -> lookupAssign s stmts'
 
         match e with
         | Variable x ->
@@ -179,8 +181,18 @@ let rec expandAllNoChurch (stmts: List<Statement>) : List<Statement> =
     let rec expandAllReversed (stmts': List<Statement>) : List<Statement> =
         match stmts' with
         | [] -> []
-        | (Assign (name', e))::stmts' -> Assign (name', (expandVars (Assign (name', e) :: stmts') (Variable name'))) :: expandAllReversed stmts'
-        | stmt::stmts' -> stmt :: expandAllReversed stmts'
+
+        | Assign (name', e) :: rest ->
+            let expanded = expandVars (Assign(name', e) :: rest) (Variable name')
+            Assign(name', expanded) :: expandAllReversed rest
+
+        | Execute e :: rest ->
+            // ⭐ This is what was missing
+            let expanded = expandVars stmts' e
+            Execute expanded :: expandAllReversed rest
+
+        | stmt :: rest ->
+            stmt :: expandAllReversed rest
 
     List.rev (expandAllReversed (List.rev stmts))
 
