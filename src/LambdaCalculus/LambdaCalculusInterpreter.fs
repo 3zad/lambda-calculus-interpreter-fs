@@ -96,3 +96,29 @@ let transpiles (s: string) : Result<string, string> =
     match getMain exprs with
     | Some e -> Result.Ok ("main="+ exprToString e + ";") // Wrap it in an entry point
     | None -> Result.Error ("Error: No main expression found.")
+
+// Convenience functions which are C#-friendly
+let execsNormal (s: string) : string = 
+    match execs Normal s with
+    | Result.Ok s -> s
+    | Result.Error err -> err
+
+let execsApplicative (s: string) : string = 
+    match execs Applicative s with
+    | Result.Ok s -> s
+    | Result.Error err -> err
+
+let execsFastNormal (s: string) : string = 
+    match execsFast Normal s with
+    | Result.Ok s -> s
+    | Result.Error err -> err
+
+let execsFastApplicative (s: string) : string = 
+    match execsFast Applicative s with
+    | Result.Ok s -> s
+    | Result.Error err -> err
+
+let transpilesCs (s: string) : string =
+    match transpiles s with
+    | Result.Ok s -> s
+    | Result.Error err -> err
