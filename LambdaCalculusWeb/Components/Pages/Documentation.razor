@@ -1,0 +1,240 @@
+﻿@page "/docs"
+
+<Header></Header>
+
+<h1>Documentation</h1>
+
+<h2>Versions <a href="/V1">V1</a> and <a href="/V2">V2</a></h2>
+
+<p>
+    This lambda-calculus–inspired language mixes the untyped λ-calculus with a small set
+    of built-in arithmetic and control primitives. A program is a sequence of
+    definitions followed by one or more expressions to evaluate.
+</p>
+
+<pre>
+% NB! This is a comment
+</pre>
+
+<h4>1. Comments</h4>
+<ul>
+    <li><code>% ...</code> introduces a single-line comment.</li>
+</ul>
+
+<h4>2. Definitions</h4>
+
+<p>
+    Definitions bind names to expressions. Every definition has the form:
+</p>
+
+<pre>
+name = expression;
+</pre>
+
+<p>Examples:</p>
+<pre>
+ten = 10;
+doubleTen = mul ten (succ ten);
+</pre>
+
+<h4>3. Identifiers</h4>
+<ul>
+    <li>Identifiers consist of letters, digits, and underscores, starting with a letter.</li>
+    <li>Identifiers refer to constant values, intermediate computations, or functions.</li>
+</ul>
+
+<h4>4. Literals</h4>
+<ul>
+    <li>Integer literals (e.g., <code>0</code>, <code>10</code>, <code>140</code>)</li>
+</ul>
+
+<h4>5. Lambda Expressions</h4>
+
+<p>Function definitions use λ-abstraction:</p>
+
+<pre>
+λ arg1 arg2 ... . body
+</pre>
+
+Example (recursive addition):
+
+<pre>
+addRec = λ n m. cond (iszero n) m (addRec (sub n 1) (add m 1));
+</pre>
+
+<h4>6. Application</h4>
+
+<p>Function application is left-associative:</p>
+
+<pre>
+add 2 2
+mul ten (succ ten)
+</pre>
+
+Parentheses override precedence:
+
+<pre>
+sub (mul ten twenty) (add fifty ten)
+</pre>
+
+<h4>7. Built-in Operations</h4>
+
+<p>
+    A header is attached to every program by default with the following definitions.
+
+    NB! It is possible to reassign these functions in V1, but in V2 these are strictly
+    reserved keywords and programs will not reduce properly if these functions are reassigned.
+    Any function/keyword on this list generally should not be reassigned.
+</p>
+
+
+<table>
+    <tr><th>Operation</th><th>Description</th></tr>
+    <tr><td><code>add a b</code></td><td>Adds <code>a + b</code></td></tr>
+    <tr><td><code>sub a b</code></td><td>Computes <code>a - b</code> (non-negative)</td></tr>
+    <tr><td><code>mul a b</code></td><td>Computes <code>a * b</code></td></tr>
+    <tr><td><code>pred n</code></td><td>Predecessor <code>(n - 1)</code></td></tr>
+    <tr><td><code>succ n</code></td><td>Successor (<code>n + 1</code>)</td></tr>
+    <tr><td><code>pred n</code></td><td>Predecessor <code>(n - 1)</code></td></tr>
+    <tr><td><code>succ n</code></td><td>Successor (<code>n + 1</code>)</td></tr>
+    <tr><td><code>true</code></td><td>Lambda-calculus representation of <code>true</code></td></tr>
+    <tr><td><code>false</code></td><td>Lambda-calculus representation of <code>false</code></td></tr>
+    <tr><td><code>nil</code></td><td>Empty list</td></tr>
+    <tr><td><code>null</code></td><td>Lambda-calculus representation of <code>null</code></td></tr>
+    <tr><td><code>iszero n</code></td><td>Boolean test: true if 0</td></tr>
+    <tr><td><code>cond t e1 e2</code></td><td>If-then-else: if <code>t</code> then <code>e1</code> else <code>e2</code></td></tr>
+    <tr>
+        <td><code>cons x l</code></td>
+        <td>
+            Constructs a list node with head <code>x</code> and tail <code>l</code>.<br>
+        </td>
+    </tr>
+
+    <tr>
+        <td><code>hd p</code></td>
+        <td>
+            Returns the head of list <code>p</code>.<br>
+        </td>
+    </tr>
+
+    <tr>
+        <td><code>tl p</code></td>
+        <td>
+            Returns the tail of list <code>p</code>.<br>
+        </td>
+    </tr>
+    <tr><td><code>Y f</code></td><td>Y-combinator which enables recursion.</td></tr>
+</table>
+
+<h4>8. Recursion</h4>
+
+<p>
+    Recursive functions are supported by simply naming the function within its own definition,
+    as in λ-calculus with fixed-point semantics:
+</p>
+
+<pre>
+addRec = λ n m.
+    cond (iszero n)
+         m
+         (addRec (sub n 1) (add m 1));
+</pre>
+
+<h4>9. Semicolon Terminators</h4>
+
+<p>
+    Top-level definitions end with <code>;</code>.
+    Function applications and expressions do not.
+</p>
+
+<h3>Examples</h3>
+
+<h4>Constants</h4>
+<pre>
+ten = 10;
+twenty = 20;
+fifty = 50;
+hundred = 100;
+</pre>
+
+<h4>Arithmetic</h4>
+<pre>
+doubleTen = mul ten (succ ten);     % 10 * 11 = 110
+quadrupleTen = mul doubleTen (succ ten); % 110 * 11 = 1210
+halfHundred = sub hundred fifty;    % 100 - 50 = 50
+</pre>
+
+<h4>Nested Expressions</h4>
+<pre>
+result1 = add doubleTen halfHundred;           % 110 + 50 = 160
+result2 = sub (mul ten twenty) (add fifty ten); % 200 - 60 = 140
+</pre>
+
+<h4>Recursion</h4>
+<pre>
+addRec = λ n m.
+    cond (iszero n)
+         m
+         (addRec (sub n 1) (add m 1));
+</pre>
+
+<p>
+    NB! A function named <code>main</code> is required for V1. The evaluated expression will be
+    returned.
+</p>
+
+
+
+
+
+<h2>Version <a href="/V2">V2</a>-specific</h2>
+
+<p>
+    Version V2 is simply a faster version of V1. When doing arithmetic, arithmetic functions such as
+    <code>add</code>, <code>mul</code>, <code>fact</code>, etc... are hotwired; Basically evaluated in
+    the F# code rather than being Church encoded and applied however many times.
+</p>
+
+<p>
+    Version V1 can only handle arithmetic expressions where the sum/product is no greater than around 1000.
+    Version V2's default type is <code>bigint</code> which allows 
+    operations on arbitrarily big numbers.
+</p>
+
+<p>
+    Version V2 adds <code>print</code> statements as well. An unlimited number of print statements can appear in a
+    program. It is also possible to write random expressions anywhere on a newline, but nothing visible will happen during interpretation.
+</p>
+
+<p>
+    NB! Any function named <code>main</code> will not be automatically run. In order to get an output from the program a print statement is needed.
+</p>
+
+
+
+<h4>1. V2-Specific Built-in Operations</h4>
+
+<table>
+    <tr><td><code>print x</code></td><td>Outputs the value of <code>x</code></td></tr>
+</table>
+
+<h4>Printing</h4>
+<pre>
+print (add 2 2);    % prints 4
+</pre>
+
+<h4>Final Example</h4>
+
+<p>Large factorial based on nested expressions:</p>
+
+<pre>
+main =
+    fact( add result2
+              (add (add result1 result2)
+                   (addRec (succ ten) (3)) ) );
+print main;
+</pre>
+
+@code {
+
+}

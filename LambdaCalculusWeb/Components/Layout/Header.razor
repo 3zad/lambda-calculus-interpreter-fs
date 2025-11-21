@@ -1,0 +1,24 @@
+﻿<head>
+    <link rel="stylesheet" href="https://latex.vercel.app/style.css">
+</head>
+
+<p class="author">Zachary Alexander Davis<br> November 21, 2025</p>
+
+<button onclick="copyLambda()">Copy λ</button>
+<button id="dark-mode-toggle">Toggle dark mode</button>
+
+<script>
+    function copyLambda() {
+        navigator.clipboard.writeText("λ")
+    }
+
+    document
+      .querySelector("#dark-mode-toggle")
+      .addEventListener('click', () => {
+         document.body.classList.toggle("latex-dark");
+      });
+</script>
+
+@code {
+
+}

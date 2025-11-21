@@ -3,6 +3,7 @@
 @rendermode InteractiveServer
 
 <PageTitle>Lambda-Calculus Interpreter v1</PageTitle>
+<Header></Header>
 
 <h1>Insert code</h1>
 
@@ -18,7 +19,10 @@
 
 @code {
     private string result = "";
-    private string userCode = "";
+    private string userCode = """
+    addRec = λ n m. cond (iszero n) m (addRec (sub n 1) (add m 1));
+    main = addRec 4 5; % Result is 9
+    """;
 
     private void compile()
     {
