@@ -1,32 +1,10 @@
 ﻿@page "/"
-@using Microsoft.FSharp.Core
-@rendermode InteractiveServer
 
-<PageTitle>Lambda-Calculus Interpreter</PageTitle>
+<PageTitle>Home</PageTitle>
 
-<h1>Insert code</h1>
-
-<textarea class="form-control"
-          rows="5"
-          @bind="userCode">
-</textarea>
-
-<button class="btn btn-primary mt-2" @onclick="compile">Compile</button>
-<button class="btn btn-primary mt-2" @onclick="transpile">Transpile</button>
-
-<p role="status">Result: @result</p>
+<a href="/V1">V1</a>
+<a href="/V2">V2</a>
 
 @code {
-    private string result = "";
-    private string userCode = "";
 
-    private void compile()
-    {
-        result = execsNormal(userCode);
-    }
-
-    private void transpile()
-    {
-        result = transpilesCs(userCode);
-    }
 }

@@ -38,8 +38,8 @@ let main _ =
 
         print (add 2 2);
 
-        h = fact( add result2 (add (add result1 result2) (addRec (succ ten) (3)) ) ); % (140 + (160 + 140) + (11 + 3))! =~ 7.2670e1101
-        %print h;
+        main = fact( add result2 (add (add result1 result2) (addRec (succ ten) (3)) ) ); % (140 + (160 + 140) + (11 + 3))! =~ 7.2670e1101
+        print main;
 
     """ with
     | Result.Ok x -> printfn "%A" x
