@@ -1,5 +1,7 @@
 ﻿@page "/docs"
 
+<PageTitle>Documentation</PageTitle>
+
 <Header></Header>
 
 <h1>Documentation</h1>
@@ -60,6 +62,14 @@ Example (recursive addition):
 
 <pre>
 addRec = λ n m. cond (iszero n) m (addRec (sub n 1) (add m 1));
+</pre>
+
+<p><code>\\</code> can be used instead of <code>λ</code> to avoid constant copying and pasting.</p>
+
+Example:
+
+<pre>
+id = \\ x. x;
 </pre>
 
 <h4>6. Application</h4>
@@ -147,7 +157,74 @@ addRec = λ n m.
     Function applications and expressions do not.
 </p>
 
-<h3>Examples</h3>
+<h4>10. Imports</h4>
+
+<p>
+    Importing definitions from other files is possible with the <code>import</code> keyword.
+    This keyword is reserved and is not reassignable.
+</p>
+
+<p>
+    Imports are simply dumb pastes similar to <code>#include</code> in C.
+</p>
+
+<code>myfile.lam</code>
+<pre>
+foo = add 10 11;
+foo2 = sub foo 5;
+</pre>
+
+<code>main.lam</code>
+<pre>
+import myfile;
+
+thirdVariable = add foo foo2;
+</pre>
+
+At some point during the execution of the file <code>main.lam</code> the code contained in said file will look like this:
+<pre>
+foo = add 10 11;
+foo2 = sub foo 5;
+
+thirdVariable = add foo foo2;
+</pre>
+
+<p>
+    NB! If you are importing multiple files, top-level variables with the same name that appear in two or more imported files 
+    will be overwritten in the order that they are imported.
+</p>
+
+<pre>
+foo = add 10 11; % import file1 which contains foo
+foo = add 1 2; % import file2 which also contains foo
+
+% foo will equal 3 from this point on...
+</pre>
+
+<h4>11. Transpilation</h4>
+
+<p>
+    Any program that conforms to version V1's syntax can be transpiled to pure lambda calculus.
+</p>
+
+Input
+
+<pre>
+main = add 1 2;
+</pre>
+
+After transpilation
+
+<pre>
+main=((λn. (λm. (λf. (λx. (((n) (f)) (((m) (f)) (x))))))) 
+(λf. (λx. ((f) (x))))) (λf. (λx. ((f) ((f) (x)))));
+</pre>
+
+<p>
+    All transpiled code runs. You can paste transpiled code back into the code window and it will run.
+</p>
+
+<h3>12. Summary</h3>
 
 <h4>Constants</h4>
 <pre>
